@@ -6,9 +6,10 @@ class ValueByInputHash:
     Class for variables whose value is meaningful only with a certain key
     """
 
-    def __init__(self, value, hash: str):
+    def __init__(self, value, hash: str, input: any):
         self.input_hash: str = hash
         self.value = (value, hash)
+        self.input = input
         self.meta = {}
 
     override_assign = True

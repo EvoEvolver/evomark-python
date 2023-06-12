@@ -9,16 +9,18 @@ from evomark.core.src_manager import comment_delimiter
 
 
 class EvoCache:
-    def __init__(self, value, key: str, type: str, meta: Optional[Dict] = None):
+    def __init__(self, value, hash: str, input: str, type: str, meta: Optional[Dict] = None):
         self.value = value
-        self.key: str = key
+        self.hash: str = hash
+        self.input: str = input
         self.type: str = type
         self.meta = meta
 
     def get_self_dict(self):
         return {
             "value": self.value,
-            "key": self.key,
+            "hash": self.hash,
+            "input": self.input,
             "type": self.type,
             "meta": self.meta
         }
@@ -98,7 +100,7 @@ class EvoCore:
         cache_table = self.cache_table_map[filepath]
         if key not in cache_table.cache_table:
             if create_cache:
-                new_cache = EvoCache(None, key, None)
+                new_cache = EvoCache(None, key, None, None)
                 cache_table.cache_table[key] = new_cache
                 return new_cache
             else:
@@ -117,8 +119,8 @@ def load_cache_table(filepath: str) -> EvoCacheTable:
         cache_list = json.load(f)
     cache_table = EvoCacheTable()
     for cache_dict in cache_list:
-        cache = EvoCache(cache_dict["value"], cache_dict["key"], cache_dict["type"], cache_dict["meta"])
-        cache_table.cache_table[cache.key] = cache
+        cache = EvoCache(cache_dict["value"], cache_dict["key"], cache_dict["input"], cache_dict["type"], cache_dict["meta"])
+        cache_table.cache_table[cache.hash] = cache
     return cache_table
 
 

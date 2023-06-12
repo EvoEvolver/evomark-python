@@ -22,7 +22,7 @@ def cpl(prompt, use_cache=True, cache_holder: str = None, **kwargs):
     input_hash = EvolverInstance.hash(prompt)
     cache = EvolverInstance.read_cache(input_hash, filepath)
     if cache.type is not None:
-        return ValueByInputHash(cache.value, input_hash)
+        return ValueByInputHash(cache.value, input_hash, prompt)
 
     options = {**default_kwargs_cpl_openai, **kwargs}
     completion = openai.Completion.create(prompt=prompt, **options)
@@ -30,10 +30,10 @@ def cpl(prompt, use_cache=True, cache_holder: str = None, **kwargs):
     result_text = completion.choices[0].text
     # Trim the result
     result_text = result_text.strip()
-    res = ValueByInputHash(result_text, input_hash)
+    res = ValueByInputHash(result_text, input_hash, prompt)
     cache.type = "text"
     cache.value = result_text
-
+    cache.input = prompt
     return res
 
 default_kwargs_edit_openai = {"model": "text-davinci-edit-001"}
@@ -43,8 +43,9 @@ def edit(input, instruction, use_cache=True, cache_holder: str = None, **kwargs)
     filepath = stack[0].filename if cache_holder is None else cache_holder
     input_hash = EvolverInstance.hash((input, instruction))
     cache = EvolverInstance.read_cache(input_hash, filepath)
+    input_dict = {"input": input, "instruction": instruction}
     if cache.type is not None:
-        return ValueByInputHash(cache.value, input_hash)
+        return ValueByInputHash(cache.value, input_hash, input_dict)
 
     kwargs = {**default_kwargs_edit_openai, **kwargs}
     completion = openai.Edit.create(input=input, instruction=instruction , **kwargs)
@@ -52,9 +53,9 @@ def edit(input, instruction, use_cache=True, cache_holder: str = None, **kwargs)
     result_text = completion.choices[0].text
     # Trim the result
     result_text = result_text.strip()
-    res = ValueByInputHash(result_text, input_hash)
+    res = ValueByInputHash(result_text, input_hash, input_dict)
     cache.type = "text"
     cache.value = result_text
-
+    cache.input = input_dict
     return res
 
