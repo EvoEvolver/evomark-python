@@ -1,7 +1,7 @@
 import openai
 import os
 from evomark import EvolverInstance
-from data_type.chatlog import ChatLog
+from evomark.data_type.chatlog import ChatLog
 from evomark.data_type.var_types import ValueByInput
 
 openai.api_key = os.getenv("EVOMARK_OPENAI_KEY")

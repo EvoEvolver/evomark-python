@@ -1,7 +1,7 @@
 import ast
 import warnings
 
-from data_type.var_types import ValueByInput
+from evomark.data_type.var_types import ValueByInput
 from evomark.core.core import delete_old_comment_output
 from evomark import EvolverInstance
 from evomark.core.utils import get_stringified_string, get_stringified_string_with_indent
@@ -98,6 +98,10 @@ def _gen(var: ValueByInput):
     pass
 
 def update(output_path=None):
+    _, _, stacks = EvolverInstance.get_context()
+    if stacks[0].frame.f_locals["__name__"] != "__main__":
+        # warnings.warn("update() is not called in __main__. Ignored.")
+        return
     EvolverInstance.update_all_file()
     EvolverInstance.save_all_cache_to_file()
     EvolverInstance.save_all_output_to_file()
