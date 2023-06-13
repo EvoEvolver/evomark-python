@@ -97,7 +97,7 @@ def retake(var: ValueByInput):
 def _gen(var: ValueByInput):
     pass
 
-def update(output_path=None):
+def evolve(output_path=None):
     _, _, stacks = EvolverInstance.get_context()
     if stacks[0].frame.f_locals["__name__"] != "__main__":
         # warnings.warn("update() is not called in __main__. Ignored.")

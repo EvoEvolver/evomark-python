@@ -1,4 +1,4 @@
-from evomark import ask, answer, show, update, topic, set_out_path, out
+from evomark import ask, answer, show, evolve, topic, set_out_path, out
 
 set_out_path("../README.md")
 
@@ -67,4 +67,4 @@ out("""
 out(a)
 
 # By update(), the code can modify itself, that is, evolve!
-update()
+evolve()

@@ -1,4 +1,4 @@
-from evomark import show, update, ask, answer, out
+from evomark import show, evolve, ask, answer, out
 
 a = ask("Who is M. Foucault?")
 
@@ -16,4 +16,4 @@ M. Foucault refers to Michel Foucault, a French philosopher, social theorist, an
 
 out(a)
 
-update()
+evolve()
