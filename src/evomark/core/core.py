@@ -1,18 +1,26 @@
+from __future__ import annotations
+
 import hashlib
 import inspect
 import json
 import os
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from data_type.var_types import ValueByInput
 
 from evomark.core.src_manager import SrcManager
 from evomark.core.src_manager import comment_delimiter
 
+def get_hash(input: any, type: str) -> str:
+    return hashlib.sha1(json.dumps([input, type]).encode("utf-8")).hexdigest()
 
 class EvoCache:
-    def __init__(self, value, hash: str, input: str, type: str, meta: Optional[Dict] = None):
+    def __init__(self, value, hash: str, input: any, type: str, meta: Optional[Dict] = None):
         self.value = value
         self.hash: str = hash
-        self.input: str = input
+        self.input: any = input
         self.type: str = type
         self.meta = meta
 
@@ -25,10 +33,20 @@ class EvoCache:
             "meta": self.meta
         }
 
+    def set_cache(self, value: any, meta: Optional[Dict] = None):
+        assert self.value is None
+        assert self.hash is not None
+        assert self.input is not None
+        self.value = value
+        self.meta = meta
+
 
 class EvoCacheTable:
     def __init__(self):
-        self.cache_table: Dict[str, EvoCache] = {}
+        self.map: Dict[str, EvoCache] = {}
+
+    def __setitem__(self, key, value):
+        self.map[key] = value
 
 
 def serialize_cache_table(cache_table: Dict[str, EvoCache]):
@@ -70,6 +88,12 @@ class EvoCore:
         return self.file_src_keeper[filepath]
 
     def get_context(self):
+        """
+        Get the context of the caller
+        Assuming that this function is called directly at the codes of the caller
+
+        :return: The SrcManager, the line number and stack of where the caller is called.
+        """
         stack = inspect.stack()[2:]
         caller_stack = stack[0]
         filepath = caller_stack.filename
@@ -86,26 +110,25 @@ class EvoCore:
     def save_all_cache_to_file(self):
         for filepath, cache_table in self.cache_table_map.items():
             with open(filepath + ".ec.json", "w") as f:
-                f.write(serialize_cache_table(cache_table.cache_table))
+                f.write(serialize_cache_table(cache_table.map))
 
-    def hash(self, obj):
-        if isinstance(obj, str):
-            return hashlib.sha1(str(obj).encode("utf-8")).hexdigest()
-        else:
-            return hashlib.sha1(json.dumps(obj).encode("utf-8")).hexdigest()
-
-    def read_cache(self, key: str, filepath: str, create_cache=True) -> EvoCache:
+    def read_cache(self, input: any, type:str, filepath: str, create_cache=True) -> EvoCache:
+        hash = get_hash(input, type)
         if filepath not in self.cache_table_map:
             self.cache_table_map[filepath] = load_cache_table(filepath)
         cache_table = self.cache_table_map[filepath]
-        if key not in cache_table.cache_table:
+        if hash not in cache_table.map:
             if create_cache:
-                new_cache = EvoCache(None, key, None, None)
-                cache_table.cache_table[key] = new_cache
+                new_cache = EvoCache(None, hash, input, type)
+                cache_table.map[hash] = new_cache
                 return new_cache
             else:
                 return None
-        return cache_table.cache_table[key]
+        return cache_table.map[hash]
+
+    def set_cache(self, var: ValueByInput, filepath: str):
+        cache_table = self.cache_table_map[filepath]
+        cache_table[var.input_hash] = EvoCache(var.value, var.input_hash, var.input, var.type)
 
 
 def load_cache_table(filepath: str) -> EvoCacheTable:
@@ -119,12 +142,9 @@ def load_cache_table(filepath: str) -> EvoCacheTable:
         cache_list = json.load(f)
     cache_table = EvoCacheTable()
     for cache_dict in cache_list:
-        cache = EvoCache(cache_dict["value"], cache_dict["key"], cache_dict["input"], cache_dict["type"], cache_dict["meta"])
-        cache_table.cache_table[cache.hash] = cache
+        cache = EvoCache(cache_dict["value"], cache_dict["hash"], cache_dict["input"], cache_dict["type"], cache_dict["meta"])
+        cache_table.map[cache.hash] = cache
     return cache_table
-
-
-EvolverInstance = EvoCore()
 
 
 def delete_old_comment_output(manager: SrcManager, caller_id, line_i: int, evolver_id: str):

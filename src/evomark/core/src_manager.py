@@ -1,6 +1,6 @@
 from typing import Optional
 
-from src.evomark.core.utils import escape_multi_quote
+from evomark.core.utils import escape_multi_quote
 
 comment_delimiter_len = 5
 comment_delimiter = '"' * comment_delimiter_len
@@ -26,7 +26,7 @@ class SrcManager:
         else:
             self.pending_ops[caller_id] = [(op, args)]
 
-    def new_ops_for_caller(self, caller_id):
+    def clear_ops_for_caller(self, caller_id):
         self.pending_ops[caller_id] = []
 
     def apply_pending_ops(self):

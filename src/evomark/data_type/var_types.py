@@ -1,16 +1,36 @@
+from typing import Callable
+
+from evomark.core.core import EvoCache
 from evomark.core.utils import get_stringified_string
 
 
-class ValueByInputHash:
+class ValueByInput:
     """
     Class for variables whose value is meaningful only with a certain key
     """
 
-    def __init__(self, value, hash: str, input: any):
+    def __init__(self, value, hash: str, input: any, type: str):
         self.input_hash: str = hash
         self.value = (value, hash)
         self.input = input
+        self.type = type
         self.meta = {}
+        # Should ensure that self.func(self.input) = self.value
+        self.func = None
+
+    def retake(self):
+        assert self.func is not None
+        res = ValueByInput(self.func(self.input), self.input_hash, self.input, self.type)
+        res.meta = self.meta
+        res.func = self.func
+        return res
+
+    @classmethod
+    def from_cache(cls, cache: EvoCache, func: Callable):
+        res = ValueByInput(cache.value, cache.hash, cache.input, cache.type)
+        res.meta = cache.meta
+        res.func = func
+        return res
 
     override_assign = True
 
@@ -40,8 +60,3 @@ class ValueByInputHash:
         res.append(f'"{self.input_hash}"')
         res.append(")")
         return "".join(res)
-
-
-class CachedValue(ValueByInputHash):
-    def __init__(self, value, hash: str):
-        super().__init__(value, hash)

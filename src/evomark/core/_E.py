@@ -1,7 +1,9 @@
 import ast
 import warnings
 
-from evomark.core.core import EvolverInstance, delete_old_comment_output
+from data_type.var_types import ValueByInput
+from evomark.core.core import delete_old_comment_output
+from evomark import EvolverInstance
 from evomark.core.utils import get_stringified_string, get_stringified_string_with_indent
 
 
@@ -9,7 +11,7 @@ def show(var):
     evolver_id = "show"
     manager, line_i, stacks = EvolverInstance.get_context()
     caller_id = get_caller_id(stacks[0])
-    manager.new_ops_for_caller(caller_id)
+    manager.clear_ops_for_caller(caller_id)
     if check_if_stand_alone_call(stacks[0]) is None:
         return
     delete_old_comment_output(manager, caller_id, line_i, evolver_id)
@@ -58,7 +60,7 @@ def let(var):
     manager, line_i, stacks = EvolverInstance.get_context()
     args = check_if_stand_alone_call(stacks[0])
     caller_id = get_caller_id(stacks[0])
-    manager.new_ops_for_caller(caller_id)
+    manager.clear_ops_for_caller(caller_id)
     if args is None:
         return
     assert len(args) == 1
@@ -83,6 +85,17 @@ def let(var):
 
     manager.insert_with_same_indent_after(caller_id, line_i, [f'{LHS_value} = {stringified_var}'])
 
+def retake(var: ValueByInput):
+    manager, line_i, stacks = EvolverInstance.get_context()
+    filepath = stacks[0].filename
+    #caller_id = get_caller_id(stacks[0])
+    #manager.del_origin_lines(caller_id, line_i, line_i)
+    new_var = var.retake()
+    EvolverInstance.set_cache(new_var, filepath)
+    var.__dict__["value"] = new_var.value
+
+def _gen(var: ValueByInput):
+    pass
 
 def update(output_path=None):
     EvolverInstance.update_all_file()
