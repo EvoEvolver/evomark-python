@@ -1,7 +1,10 @@
 import copy
 
+from evomark import EvolverInstance
+from evomark.model.openai import _answer_1
 
-class ChatLog:
+
+class Chat:
     """
     Class for storing the chat history for OpenAI API call
     """
@@ -26,7 +29,7 @@ class ChatLog:
         self.add_message(content, "assistant")
 
     def __copy__(self):
-        new_chat_log = ChatLog(self.system_message)
+        new_chat_log = Chat(self.system_message)
         new_chat_log.history = copy.deepcopy(self.history)
         return new_chat_log
 
@@ -53,3 +56,7 @@ class ChatLog:
         for entry in log_list:
             res.append(f"{entry['role']}: {entry['content']}")
         return "\n".join(res)
+
+    def answer(self, question: str, **kwargs):
+        _, _, stack = EvolverInstance.get_context()
+        return _answer_1(question, self, stack[0].filename, **kwargs)

@@ -4,19 +4,13 @@ The file handles the output of the script.
 import os
 
 from evomark import EvolverInstance
+from evomark.io.utils import get_abs_path
 
 
 def set_out_path(out_path):
     caller_path = EvolverInstance.get_context()[2][0].filename
     EvolverInstance.default_out_path[caller_path] = get_abs_path(out_path, caller_path)
 
-def get_abs_path(out_path, caller_path):
-    if os.path.isabs(out_path):
-        abs_path = out_path
-    else:
-        abs_path = os.path.join(os.path.dirname(caller_path), out_path)
-    abs_path = os.path.normpath(abs_path)
-    return abs_path
 
 def out_cl(content):
     caller_path = EvolverInstance.get_context()[2][0].filename
@@ -25,7 +19,7 @@ def out_cl(content):
 
 def _out_cl(content, out_path):
     EvolverInstance.append_output(out_path, content)
-    EvolverInstance.append_output(out_path, "\n")
+    EvolverInstance.append_output(out_path, "\n\n")
 
 
 def out(content):

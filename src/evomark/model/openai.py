@@ -1,8 +1,11 @@
+from __future__ import annotations
 import openai
 import os
 from evomark import EvolverInstance
-from evomark.data_type.chatlog import ChatLog
+
 from evomark.data_type.var_types import ValueByInput
+
+verbose = 1
 
 openai.api_key = os.getenv("EVOMARK_OPENAI_KEY")
 
@@ -58,42 +61,60 @@ def edit(text, instruction, **kwargs):
 
 
 def _edit(input, options):
-    return openai.Edit.create(input=input[0], instruction=input[1], **options).choices[0].text
+    return openai.Edit.create(input=input[0], instruction=input[1], **options).choices[
+        0].text
 
 
-def init_chat(init_message: any, system_message: any = None) -> ChatLog:
-    chat = ChatLog(system_message)
-    chat.add_user_message(init_message)
-    return chat
-
-
-def ask(message: any, chat: ChatLog = None):
-    if chat is None:
-        return init_chat(message)
-    chat.add_user_message(message)
-    return chat
 
 
 default_kwargs_chat_openai = {"model": "gpt-3.5-turbo"}
 
-def _answer(messages, options):
-    return openai.ChatCompletion.create(messages=messages, **options).choices[0].message.content
 
-def answer(chat: ChatLog, **kwargs):
+def _answer_0(messages, options):
+    return openai.ChatCompletion.create(messages=messages, **options).choices[
+        0].message.content
+
+
+def _answer_1(question: str, chat: Chat, caller_path: str, **kwargs):
+    chat.add_user_message(question)
+
     input = chat.get_log_list()
     options = {**default_kwargs_chat_openai, **kwargs}
-    func = lambda x: _answer(x, options)
+    func = lambda x: _answer_0(x, options)
 
-    _, _, stack = EvolverInstance.get_context()
-    cache = EvolverInstance.read_cache(input, "chat", stack[0].filename)
+    cache = EvolverInstance.read_cache(input, "chat", caller_path)
     if cache.value is not None:
         return ValueByInput.from_cache(cache, func)
 
+    if verbose > 0:
+        print("Asking the model:")
+        print(input)
+
     result_text = func(input)
     chat.add_assistant_message(result_text)
+
+    if verbose > 0:
+        print("Response recieved:")
+        print(result_text)
 
     cache.set_cache(result_text)
     return ValueByInput.from_cache(cache, func)
 
 
+def answer(question: str, system_message: str = None, **kwargs):
+    """
+    One turn ask and answer
+    :param question:
+    :param system_message:
+    :param kwargs:
+    :return:
+    """
+    _, _, stack = EvolverInstance.get_context()
+    chat = init_chat(question, system_message)
+    return _answer_1(question, chat, stack[0].filename, **kwargs)
 
+from evomark.data_type.chat import Chat
+def init_chat(init_message: any, system_message: any = None) -> Chat:
+    chat = Chat(system_message)
+    chat.add_user_message(init_message)
+    return chat

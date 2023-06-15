@@ -35,29 +35,10 @@ important consideration:
 - Easy to give human feedback
 """""
 
-
-a = ask(em)
-
+a = answer(em)
 show(a)
 """""show
-user: topic: Write a introduction for Evomark
-what it is: 
-- A framework for working with AIGC models in python
-
-what it does: 
-- Control AIGC workflow by writing python code
-- The workflow and human give feedback to each other by modifying (evolving) the code
-
-important consideration: 
-- Cache whenever possible to save the number of API calls
-- Everything happen in one place: no copy and paste
-- Easy to give human feedback
-"""""
-
-a = answer(a)
-show(a)
-"""""show
-Introducing Evomark - a powerful framework designed to simplify working with AIGC models in Python. With Evomark, controlling the workflow of your AIGC models has never been easier. By writing Python code, you can effortlessly fine-tune your models and receive human feedback to help make them even better. Evomark's unique approach involves evolving the code based on feedback, resulting in a more accurate and efficient workflow. The framework also offers important considerations such as caching to save on API calls and ensuring everything happens in one place. Additionally, Evomark makes it easy for humans to give feedback. Say goodbye to copy and paste and hello to a revolutionary way to work with AIGC models - Evomark.
+Introducing Evomark - the ultimate framework for working with AIGC models in python. With Evomark, you can control your AIGC workflow by writing python code that evolves through feedback from humans. This dynamic interaction between the model and human feedback allows for more accurate predictions and streamlined workflow. Evomark has several important considerations, including caching whenever possible to save the number of API calls, ensuring everything happens in one place to eliminate the need for copy and paste, and making it easy to provide human feedback. Evomark is the perfect tool for any data scientist looking to enhance their AIGC workflow and improve their results.
 """""
 
 out("""
