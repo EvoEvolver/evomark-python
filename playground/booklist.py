@@ -1,6 +1,6 @@
 from evomark import *
 
-name = "M. Foucault"
+name = "M. Foucault.md"
 
 set_out_path(name)
 
