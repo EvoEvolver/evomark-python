@@ -59,4 +59,5 @@ class Chat:
 
     def answer(self, question: str, **kwargs):
         _, _, stack = EvolverInstance.get_context()
-        return _answer_1(question, self, stack[0].filename, **kwargs)
+        self.add_user_message(question)
+        return _answer_1(self, stack[0].filename, **kwargs)

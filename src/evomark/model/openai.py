@@ -75,8 +75,7 @@ def _answer_0(messages, options):
         0].message.content
 
 
-def _answer_1(question: str, chat: Chat, caller_path: str, **kwargs):
-    chat.add_user_message(question)
+def _answer_1(chat: Chat, caller_path: str, **kwargs):
 
     input = chat.get_log_list()
     options = {**default_kwargs_chat_openai, **kwargs}
@@ -111,7 +110,7 @@ def answer(question: str, system_message: str = None, **kwargs):
     """
     _, _, stack = EvolverInstance.get_context()
     chat = init_chat(question, system_message)
-    return _answer_1(question, chat, stack[0].filename, **kwargs)
+    return _answer_1(chat, stack[0].filename, **kwargs)
 
 from evomark.data_type.chat import Chat
 def init_chat(init_message: any, system_message: any = None) -> Chat:
