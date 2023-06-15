@@ -1,4 +1,4 @@
-Here are the books written by M. Foucault:
+Here are the books written by M. Foucault.md:
 
 # Discipline and Punish
 
@@ -13,4 +13,14 @@ Foucault argues that sexuality is not an innate, biologically determined aspect 
 Drawing on extensive research into the archives of sexology and other fields, Foucault demonstrates how sexuality has been treated as a source of moral and social control throughout history, but also how it has been subverted and resisted by various groups and individuals.
 
 The History of Sexuality is a seminal work that has inspired countless debates and discussions across a range of disciplines, from sociology and psychology to gender studies and cultural studies. It remains a powerful and provocative read, offering a critical and nuanced perspective on one of the most fundamental aspects of human existence.
+
+# Madness and Civilization
+
+Madness and Civilization is a groundbreaking work of historical analysis by philosopher and historian Michel Foucault. Originally published in 1961 under the French title Folie et Déraison, Foucault's book explores the social and cultural construction of mental illness. Drawing on sources from the Middle Ages to the 19th century, he presents a fascinating history of Western attitudes toward madness and the forms of confinement, punishment, and medical treatment used to manage it.
+
+Foucault's central thesis is that madness is not a natural or universal phenomenon, but rather a historical and cultural construct that has evolved over time. He argues that our understanding of madness has been shaped by changing social and political conditions, including the rise of the modern nation-state and the emergence of new forms of power and control.
+
+Through a series of case studies, Foucault illuminates the ways in which individuals who were considered "mad" were stigmatized, ostracized, and confined over the course of centuries. He examines the different forms of confinement used in psychiatric institutions, as well as the role of medicine in treating and managing mental illness.
+
+Ultimately, Madness and Civilization offers a thought-provoking inquiry into the ways in which our society has constructed and understood mental illness. It remains a seminal work in the field of social and cultural history, and continues to influence scholars and practitioners today.
 

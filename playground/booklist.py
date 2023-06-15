@@ -4,21 +4,20 @@ name = "M. Foucault.md"
 
 set_out_path(name)
 
-q = question("What is the important books written by" + name + "?")
-q.requirement = "Answer in the format of ['book1', 'book2']"
+q = question("What is the important books written by " + name + "?")
+q.requirement = 'Answer in the format of ["book1", "book2"]'
 
 show(q)
 """""show
-question: What is the important books written byM. Foucault?
-requirement: Answer in the format of ['book1', 'book2']
+question: What is the important books written by M. Foucault.md?
+requirement: Answer in the format of ["book1", "book2"]
 """""
 
 a = answer(q)
 booklist = parse(a)
-
 show(a)
 """""show
-["Discipline and Punish", "The History of Sexuality"]
+["Discipline and Punish", "The History of Sexuality", "Madness and Civilization"]
 """""
 
 out_cl("Here are the books written by " + name + ":")
@@ -29,6 +28,5 @@ for book in booklist:
     a = answer(t)
     out_cl("# " + book)
     out_cl(a)
-
 
 evolve()

@@ -106,7 +106,7 @@ class EvoCore:
             curr_src = manager.get_curr_src()
             with open(filepath, "w") as f:
                 f.write(curr_src)
-            manager.__init__(curr_src)
+            #manager.__init__(curr_src)
 
     def save_all_cache_to_file(self):
         for filepath, cache_table in self.cache_table_map.items():
