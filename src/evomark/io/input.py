@@ -33,3 +33,24 @@ def read(file_path) -> Stream:
     src = open(abs_path, "r").read()
     paragraphs = src.split("\n\n")
     return Stream(paragraphs)
+
+import json
+_supported_langs = ["JSON"]
+def parse(src: str, lang: str="JSON"):
+    """
+    :param src: The source code to parse.
+    :param lang: The language of the source code.
+    """
+    _src = str(src)
+    if lang not in _supported_langs:
+        raise Exception("Unsupported language: " + lang)
+    try:
+        if lang == "JSON":
+            # Ignore the period at the end of the source
+            if _src[-1] == ".":
+                _src = _src[:-1]
+            return json.loads(_src)
+    except Exception as e:
+        print("Parse failed on:\n" + str(_src))
+        print("Error: " + str(e))
+        return None
