@@ -1,4 +1,16 @@
 
 # Evomark
 
-Introducing Evomark - the ultimate framework for working with AIGC models in python. With Evomark, you can control your AIGC workflow by writing python code that evolves through feedback from humans. This dynamic interaction between the model and human feedback allows for more accurate predictions and streamlined workflow. Evomark has several important considerations, including caching whenever possible to save the number of API calls, ensuring everything happens in one place to eliminate the need for copy and paste, and making it easy to provide human feedback. Evomark is the perfect tool for any data scientist looking to enhance their AIGC workflow and improve their results.
+# Introduction to Evomark
+
+Evomark is a powerful Python framework that allows you to control your AI-generated content workflow. With Evomark, you can modify and improve your AIGC models by writing Python code and receiving feedback from humans.
+
+Here are some of the things that Evomark can do:
+
+- Control AIGC workflow by writing Python code
+- Allow workflow and human feedback to evolve code
+- Cache whenever possible to save API calls
+- Keep everything in one place to avoid copy-and-paste
+- Provide an easy way to receive human feedback
+
+Evomark is an essential tool for anyone working with AI-generated content models. With its simple language and short sentences, it's easy to understand and use. Whether you're a beginner or an experienced developer, Evomark can help improve your AIGC models and workflow.

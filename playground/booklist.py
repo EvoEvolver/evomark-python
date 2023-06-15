@@ -1,8 +1,8 @@
 from evomark import *
 
-name = "M. Foucault.md"
+name = "M. Foucault"
 
-set_out_path(name)
+set_out_path(name + ".md")
 
 q = question("What is the important books written by " + name + "?")
 q.requirement = 'Answer in the format of ["book1", "book2"]'
