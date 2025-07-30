@@ -33,7 +33,7 @@ class SrcManager:
         for ops in self.pending_ops.values():
             for op, args in ops:
                 op(*args)
-        self.pending_ops = {}
+        # self.pending_ops = {}
 
     def get_curr_src(self):
         self.apply_pending_ops()
@@ -41,7 +41,11 @@ class SrcManager:
         for line in self.curr_list:
             if line is not None:
                 no_none_list.append(line)
+        self.__init__(self.src)
         return "\n".join(no_none_list)
+
+    def get_src_line(self, line_i):
+        return self.src_list[line_i]
 
     def get_indent(self, line_idx_origin: int):
         return len(self.src_list[line_idx_origin]) - len(self.src_list[line_idx_origin].lstrip())

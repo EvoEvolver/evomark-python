@@ -5,20 +5,20 @@ name = "M. Foucault"
 set_out_path(name + ".md")
 
 q = question("What is the important books written by " + name + "?")
-q.requirement = 'Answer in the format of ["book1", "book2"]'
+#q.requirement = 'Answer in the format of ["book1", "book2"]'
 
 show(q)
 """""show
-question: What is the important books written by M. Foucault.md?
-requirement: Answer in the format of ["book1", "book2"]
+question: What is the important books written by M. Foucault?
 """""
 
-a = answer(q)
+a = answer(q, system_message='Answer in the format of ["book1", "book2"]')
 booklist = parse(a)
 show(a)
 """""show
-["Discipline and Punish", "The History of Sexuality", "Madness and Civilization"]
+["Madness and Civilization", "The Birth of the Clinic"]
 """""
+
 
 out_cl("Here are the books written by " + name + ":")
 

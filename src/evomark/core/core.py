@@ -4,52 +4,51 @@ import hashlib
 import inspect
 import json
 import os
-from typing import Dict, Optional, Tuple
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from data_type.var_types import ValueByInput
+from typing import Dict, Optional, Tuple, List
 
 from evomark.core.src_manager import SrcManager
 from evomark.core.src_manager import comment_delimiter
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from evomark.data_type.var_types import ValueByInput
 
 def get_hash(input: any, type: str) -> str:
     return hashlib.sha1(json.dumps([input, type]).encode("utf-8")).hexdigest()
 
-class EvoCache:
+class Cache:
     def __init__(self, value, hash: str, input: any, type: str, meta: Optional[Dict] = None):
-        self.value = value
-        self.hash: str = hash
-        self.input: any = input
-        self.type: str = type
-        self.meta = meta
+        self._value = value
+        self._hash: str = hash
+        self._input: any = input
+        self._type: str = type
+        self._meta = meta
 
     def get_self_dict(self):
         return {
-            "value": self.value,
-            "hash": self.hash,
-            "input": self.input,
-            "type": self.type,
-            "meta": self.meta
+            "value": self._value,
+            "hash": self._hash,
+            "input": self._input,
+            "type": self._type,
+            "meta": self._meta
         }
 
     def set_cache(self, value: any, meta: Optional[Dict] = None):
-        assert self.value is None
-        assert self.hash is not None
-        assert self.input is not None
-        self.value = value
-        self.meta = meta
+        self._value = value
+        self._meta = meta
+
+    def is_valid(self):
+        return self._value is not None
 
 
 class EvoCacheTable:
     def __init__(self):
-        self.map: Dict[str, EvoCache] = {}
+        self.map: Dict[str, Cache] = {}
 
     def __setitem__(self, key, value):
         self.map[key] = value
 
 
-def serialize_cache_table(cache_table: Dict[str, EvoCache]):
+def serialize_cache_table(cache_table: Dict[str, Cache]):
     res = []
     for key, cache in cache_table.items():
         res.append(cache.get_self_dict())
@@ -66,6 +65,8 @@ class EvoCore:
         self.file_outputs: Dict[str, list] = {}
         # Map from the file path to the default output path for it
         self.default_out_path: Dict[str, str] = {}
+        # List of pending cache
+        self.pending_cache: List[Tuple[Cache, str]] = []
 
     def get_out_path(self, caller_path):
         if caller_path in self.default_out_path:
@@ -109,28 +110,40 @@ class EvoCore:
             #manager.__init__(curr_src)
 
     def save_all_cache_to_file(self):
+        self.apply_cache_update()
         for filepath, cache_table in self.cache_table_map.items():
             with open(filepath + ".ec.json", "w") as f:
                 f.write(serialize_cache_table(cache_table.map))
 
-    def read_cache(self, input: any, type:str, filepath: str, create_cache=True) -> EvoCache:
+    def read_cache(self, input: any, type:str, filepath: str, create_cache=True) -> Cache | None:
         hash = get_hash(input, type)
         if filepath not in self.cache_table_map:
             self.cache_table_map[filepath] = load_cache_table(filepath)
         cache_table = self.cache_table_map[filepath]
         if hash not in cache_table.map:
             if create_cache:
-                new_cache = EvoCache(None, hash, input, type)
-                cache_table.map[hash] = new_cache
+                new_cache = Cache(None, hash, input, type)
+                self.add_cache(new_cache, filepath)
                 return new_cache
             else:
                 return None
         return cache_table.map[hash]
 
-    def set_cache(self, var: ValueByInput, filepath: str):
-        cache_table = self.cache_table_map[filepath]
-        cache_table[var.input_hash] = EvoCache(var.value, var.input_hash, var.input, var.type)
+    def add_value_to_cache(self, var: ValueByInput, filepath: str):
+        cache = Cache(var.value, var.input_hash, var.input, var.type)
+        self.pending_cache.append((cache, filepath))
 
+    def add_cache(self, cache: Cache, filepath: str):
+        self.pending_cache.append((cache, filepath))
+
+    def apply_cache_update(self):
+        for cache, filepath in self.pending_cache:
+            if cache.is_valid():
+                self.cache_table_map[filepath].map[cache._hash] = cache
+        self.pending_cache = []
+
+    def discard_cache_update(self):
+        self.pending_cache = []
 
 def load_cache_table(filepath: str) -> EvoCacheTable:
     cache_path = filepath + ".ec.json"
@@ -143,8 +156,8 @@ def load_cache_table(filepath: str) -> EvoCacheTable:
         cache_list = json.load(f)
     cache_table = EvoCacheTable()
     for cache_dict in cache_list:
-        cache = EvoCache(cache_dict["value"], cache_dict["hash"], cache_dict["input"], cache_dict["type"], cache_dict["meta"])
-        cache_table.map[cache.hash] = cache
+        cache = Cache(cache_dict["value"], cache_dict["hash"], cache_dict["input"], cache_dict["type"], cache_dict["meta"])
+        cache_table.map[cache._hash] = cache
     return cache_table
 
 

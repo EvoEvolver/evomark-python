@@ -1,9 +1,5 @@
 import copy
 
-from evomark import EvolverInstance
-from evomark.model.openai import _answer_1
-
-
 class Chat:
     """
     Class for storing the chat history for OpenAI API call
@@ -57,7 +53,3 @@ class Chat:
             res.append(f"{entry['role']}: {entry['content']}")
         return "\n".join(res)
 
-    def answer(self, question: str, **kwargs):
-        _, _, stack = EvolverInstance.get_context()
-        self.add_user_message(question)
-        return _answer_1(self, stack[0].filename, **kwargs)
